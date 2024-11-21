@@ -1,7 +1,7 @@
 "use strict";
 
 const express = require('express');
-const cors = require('../../headerCORS');
+const cors = require('./headerCORS');
 const mongoose = require('../../mongoDB');  // Importamos la conexión ya realizada en mongoDB.js
 const Author = require('../../models/author');
 const Publisher = require('../../models/publisher');
