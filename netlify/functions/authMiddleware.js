@@ -1,11 +1,8 @@
+// authMiddleware.js
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
-// Middleware aplicado globalmente
-app.use(authMiddleware); // Esto podría estar afectando `/auth/login`
 
-// Excluir rutas específicas
-app.use("/auth/login", require("./login")); // Sin `authMiddleware`
-
+// Middleware para verificar JWT
 const authenticateJWT = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1]; // Asumimos que el token viene como 'Bearer <token>'
 
@@ -13,14 +10,13 @@ const authenticateJWT = (req, res, next) => {
     return res.status(403).json({ message: 'Acceso denegado: No se proporcionó token' });
   }
 
-  jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Token no válido' });
-    }
-    req.user = user; // Almacenamos los datos del usuario decodificados
+  // En este caso verificamos el token fijo "abc123" sin verificar un secreto
+  if (token === "abc123") {
+    req.user = { username: "admin@example.com" }; // Simulación de un usuario validado
     next();
-  });
+  } else {
+    return res.status(403).json({ message: 'Token no válido' });
+  }
 };
 
 module.exports = authenticateJWT;
-

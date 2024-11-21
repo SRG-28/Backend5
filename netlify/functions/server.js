@@ -1,3 +1,4 @@
+// server.js
 "use strict";
 
 const express = require('express');
@@ -15,21 +16,7 @@ require('dotenv').config();
 const app = express();
 
 // Middleware de autenticación
-const authenticateJWT = (req, res, next) => {
-  const token = req.headers['authorization'];
-
-  if (!token) {
-    return res.status(403).json({ message: 'Access denied' });
-  }
-
-  jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Invalid or expired token' });
-    }
-    req.user = user;  // Añadimos la información del usuario a la solicitud
-    next();
-  });
-};
+const authenticateJWT = require('./authMiddleware');  // Importamos el middleware de autenticación
 
 // Usar middleware para parsear JSON, habilitar CORS y añadir seguridad con Helmet
 app.use(express.json());
@@ -205,5 +192,5 @@ app.delete('/.netlify/functions/server/publishers/:id', async (req, res) => {
   }
 });
 
-// Exportar como función sin servidor (serverless function)
+// Exponer el servidor a través de serverless
 module.exports.handler = serverless(app);

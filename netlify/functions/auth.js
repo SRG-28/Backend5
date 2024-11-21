@@ -1,3 +1,4 @@
+// auth.js
 exports.handler = async (event) => {
   if (event.httpMethod === "POST") {
     try {
