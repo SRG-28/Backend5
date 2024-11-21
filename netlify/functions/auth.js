@@ -1,36 +1,48 @@
-"use strict"
-
-const headers = require('./headerCORS');
+// netlify/functions/auth.js
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
-// Middleware aplicado globalmente
-app.use(authMiddleware); // Esto podría estar afectando `/auth/login`
+const bcrypt = require("bcryptjs");
 
-// Excluir rutas específicas
-app.use("/auth/login", require("./login")); // Sin `authMiddleware`
-
-exports.handler = async (event, context) => {
-
-  if (event.httpMethod == "OPTIONS") {
-    return {statusCode: 200,headers,body: "OK"};
-  }
-
-  try {
-
-    const data = JSON.parse(event.body);
-
-   if (!data.token) {
-      return { statusCode: 400, headers, body: 
-         'A token is required for authentication' };
-    }
+exports.handler = async (event) => {
+  if (event.httpMethod === "POST") {
     try {
-      const decoded = jwt.verify(data.token, process.env.TOKEN_KEY);
-    } catch (err) {
-      return { statusCode: 400, headers, body: 'Invalid Token' };
+      const { username, password } = JSON.parse(event.body);
+
+      if (!username || !password) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "Username and password are required" }),
+        };
+      }
+
+      // Simula la validación del usuario
+      const mockUser = { username: "admin@example.com", passwordHash: "$2a$10$e8.d8..." };
+
+      const passwordMatch = await bcrypt.compare(password, mockUser.passwordHash);
+
+      if (!passwordMatch) {
+        return {
+          statusCode: 401,
+          body: JSON.stringify({ error: "Invalid credentials" }),
+        };
+      }
+
+      const token = jwt.sign({ username: mockUser.username }, "secret-key", { expiresIn: "1h" });
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ token }),
+      };
+    } catch (error) {
+      console.error("Error in login handler:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Internal Server Error" }),
+      };
     }
-    return { statusCode: 200, headers, body: 'Successful authorization'};
-  } catch (error) {
-    console.log(error);
-    return { statusCode: 422, headers, body: JSON.stringify(error) };
   }
+
+  return {
+    statusCode: 405,
+    body: JSON.stringify({ error: "Method Not Allowed" }),
+  };
 };
