@@ -1,0 +1,8 @@
+[
+    {
+      "email": "admin@example.com",
+      "password": "$2a$10$JHXsOXXF2...bcrypthashedpassword",
+      "role": "admin"
+    }
+]
+  
