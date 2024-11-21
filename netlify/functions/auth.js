@@ -1,6 +1,3 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-
 exports.handler = async (event) => {
   if (event.httpMethod === "POST") {
     try {
@@ -14,35 +11,22 @@ exports.handler = async (event) => {
         };
       }
 
-      // Usuario de ejemplo con contraseña encriptada
+      // Usuario y contraseña predeterminados
       const mockUser = {
         username: "admin@example.com",
-        passwordHash: "$2a$10$hA8yhjQhNTJZh/Qnxv9nAeNftqc74nUuvpCPs1R3/njWl5OYjR7Lq", // Hash de "12345"
+        password: "12345",
       };
 
-      // Validar el username
-      if (username !== mockUser.username) {
+      // Validar username y contraseña
+      if (username !== mockUser.username || password !== mockUser.password) {
         return {
           statusCode: 401,
           body: JSON.stringify({ error: "Invalid credentials" }),
         };
       }
 
-      // Validar la contraseña
-      const passwordMatch = await bcrypt.compare(password, mockUser.passwordHash);
-      if (!passwordMatch) {
-        return {
-          statusCode: 401,
-          body: JSON.stringify({ error: "Invalid credentials" }),
-        };
-      }
-
-      // Generar el token JWT
-      const token = jwt.sign(
-        { username: mockUser.username },
-        "secret-key", // Cambia esta clave por una más segura
-        { expiresIn: "1h" }
-      );
+      // Token fijo
+      const token = "abc123";
 
       return {
         statusCode: 200,
