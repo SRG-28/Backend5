@@ -26,18 +26,18 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 400,
         headers,
-        body: "All input is required"
+        body: JSON.stringify({ message: "All input is required" })
       };
     }
 
     // Buscar usuario en el archivo JSON
-    let user = await getUserByEmail(data.email); // Función para obtener usuario real desde el archivo JSON
+    const user = await getUserByEmail(data.email);
 
     if (!user) {
       return {
         statusCode: 404,
         headers,
-        body: 'User not found'
+        body: JSON.stringify({ message: "User not found" })
       };
     }
 
@@ -48,7 +48,7 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 400,
         headers,
-        body: 'Invalid Credentials'
+        body: JSON.stringify({ message: "Invalid Credentials" })
       };
     }
 
@@ -63,15 +63,15 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ token }) // Solo retornamos el token
+      body: JSON.stringify({ token })
     };
 
   } catch (error) {
-    console.log(error);
+    console.error("Error in handler:", error);
     return {
-      statusCode: 422,
+      statusCode: 500,
       headers,
-      body: JSON.stringify(error)
+      body: JSON.stringify({ message: "Internal Server Error", error: error.message })
     };
   }
 };
@@ -82,10 +82,11 @@ async function getUserByEmail(email) {
     const usersData = fs.readFileSync('./users.json', 'utf8');
     const users = JSON.parse(usersData);
 
+    // Buscar el usuario por email
     return users.find(user => user.email === email);
   } catch (error) {
     console.error("Error al leer el archivo de usuarios:", error);
-    return null;
+    throw new Error("Error al obtener el usuario.");
   }
 }
 

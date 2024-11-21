@@ -3,6 +3,11 @@
 const headers = require('./headerCORS');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
+// Middleware aplicado globalmente
+app.use(authMiddleware); // Esto podría estar afectando `/auth/login`
+
+// Excluir rutas específicas
+app.use("/auth/login", require("./routes/login")); // Sin `authMiddleware`
 
 exports.handler = async (event, context) => {
 
