@@ -22,7 +22,7 @@ app.get('/.netlify/functions/server/authors', async (req, res) => {
   }
 });
 
-app.get('/authors/:id', async (req, res) => {
+app.get('/.netlify/functions/server/authors/:id', async (req, res) => {
   try {
     const author = await Author.findOne({ id: req.params.id });
     if (!author) {
@@ -34,7 +34,7 @@ app.get('/authors/:id', async (req, res) => {
   }
 });
 
-app.post('/authors', async (req, res) => {
+app.post('/.netlify/functions/server/authors', async (req, res) => {
   const { id, author, nationality, birth_year, fields, books } = req.body;
   const newAuthor = new Author({ id, author, nationality, birth_year, fields, books });
 
@@ -46,7 +46,7 @@ app.post('/authors', async (req, res) => {
   }
 });
 
-app.put('/authors/:id', async (req, res) => {
+app.put('/.netlify/functions/server/authors/:id', async (req, res) => {
   try {
     const updatedAuthor = await Author.findOneAndUpdate(
       { id: req.params.id },
@@ -62,7 +62,7 @@ app.put('/authors/:id', async (req, res) => {
   }
 });
 
-app.delete('/authors/:id', async (req, res) => {
+app.delete('/.netlify/functions/server/authors/:id', async (req, res) => {
   try {
     const deletedAuthor = await Author.findOneAndDelete({ id: req.params.id });
     if (!deletedAuthor) {
@@ -75,7 +75,7 @@ app.delete('/authors/:id', async (req, res) => {
 });
 
 // Rutas para editores
-app.get('/publishers', async (req, res) => {
+app.get('/.netlify/functions/server/publishers', async (req, res) => {
   try {
     const publishers = await Publisher.find();
     res.json(publishers);
@@ -84,7 +84,7 @@ app.get('/publishers', async (req, res) => {
   }
 });
 
-app.get('/publishers/:id', async (req, res) => {
+app.get('/.netlify/functions/server/publishers/:id', async (req, res) => {
   try {
     const publisher = await Publisher.findOne({ id: req.params.id });
     if (!publisher) {
@@ -96,7 +96,7 @@ app.get('/publishers/:id', async (req, res) => {
   }
 });
 
-app.post('/publishers', async (req, res) => {
+app.post('/.netlify/functions/server/publishers', async (req, res) => {
   const { id, publisher, country, founded, genre, books } = req.body;
   const newPublisher = new Publisher({ id, publisher, country, founded, genre, books });
 
@@ -108,7 +108,7 @@ app.post('/publishers', async (req, res) => {
   }
 });
 
-app.put('/publishers/:id', async (req, res) => {
+app.put('/.netlify/functions/server/publishers/:id', async (req, res) => {
   try {
     const updatedPublisher = await Publisher.findOneAndUpdate(
       { id: req.params.id },
@@ -124,7 +124,7 @@ app.put('/publishers/:id', async (req, res) => {
   }
 });
 
-app.delete('/publishers/:id', async (req, res) => {
+app.delete('/.netlify/functions/server/publishers/:id', async (req, res) => {
   try {
     const deletedPublisher = await Publisher.findOneAndDelete({ id: req.params.id });
     if (!deletedPublisher) {
