@@ -11,15 +11,9 @@ const helmet = require('helmet');
 const Joi = require('joi'); // Usamos Joi para la validación de los datos de entrada
 require('dotenv').config();
 
-
 // Configurar Express
 const app = express();
 
-// Usar middleware para parsear JSON, habilitar CORS y añadir seguridad con Helmet
-app.use(express.json());
-app.use(cors);
-app.use(helmet());  // Protege las cabeceras HTTP
-app.use(authMiddleware);
 // Middleware de autenticación
 const authenticateJWT = (req, res, next) => {
   const token = req.headers['authorization'];
@@ -36,6 +30,12 @@ const authenticateJWT = (req, res, next) => {
     next();
   });
 };
+
+// Usar middleware para parsear JSON, habilitar CORS y añadir seguridad con Helmet
+app.use(express.json());
+app.use(cors);
+app.use(helmet());  // Protege las cabeceras HTTP
+app.use(authenticateJWT); // Usamos el middleware después de su definición
 
 // Esquema de validación para autores usando Joi
 const authorSchema = Joi.object({
@@ -58,7 +58,7 @@ const publisherSchema = Joi.object({
 });
 
 // Rutas para autores
-app.get('/.netlify/functions/server/authors', authenticateJWT, async (req, res) => {
+app.get('/.netlify/functions/server/authors', async (req, res) => {
   try {
     const authors = await Author.find();
     res.json(authors);
@@ -67,7 +67,7 @@ app.get('/.netlify/functions/server/authors', authenticateJWT, async (req, res) 
   }
 });
 
-app.get('/.netlify/functions/server/authors/:id', authenticateJWT, async (req, res) => {
+app.get('/.netlify/functions/server/authors/:id', async (req, res) => {
   try {
     const author = await Author.findOne({ id: req.params.id });
     if (!author) {
@@ -79,7 +79,7 @@ app.get('/.netlify/functions/server/authors/:id', authenticateJWT, async (req, r
   }
 });
 
-app.post('/.netlify/functions/server/authors', authenticateJWT, async (req, res) => {
+app.post('/.netlify/functions/server/authors', async (req, res) => {
   try {
     // Validar los datos entrantes con Joi
     const { error } = authorSchema.validate(req.body);
@@ -97,7 +97,7 @@ app.post('/.netlify/functions/server/authors', authenticateJWT, async (req, res)
   }
 });
 
-app.put('/.netlify/functions/server/authors/:id', authenticateJWT, async (req, res) => {
+app.put('/.netlify/functions/server/authors/:id', async (req, res) => {
   try {
     // Validar los datos entrantes con Joi
     const { error } = authorSchema.validate(req.body);
@@ -119,7 +119,7 @@ app.put('/.netlify/functions/server/authors/:id', authenticateJWT, async (req, r
   }
 });
 
-app.delete('/.netlify/functions/server/authors/:id', authenticateJWT, async (req, res) => {
+app.delete('/.netlify/functions/server/authors/:id', async (req, res) => {
   try {
     const deletedAuthor = await Author.findOneAndDelete({ id: req.params.id });
     if (!deletedAuthor) {
@@ -132,7 +132,7 @@ app.delete('/.netlify/functions/server/authors/:id', authenticateJWT, async (req
 });
 
 // Rutas para editores
-app.get('/.netlify/functions/server/publishers', authenticateJWT, async (req, res) => {
+app.get('/.netlify/functions/server/publishers', async (req, res) => {
   try {
     const publishers = await Publisher.find();
     res.json(publishers);
@@ -141,7 +141,7 @@ app.get('/.netlify/functions/server/publishers', authenticateJWT, async (req, re
   }
 });
 
-app.get('/.netlify/functions/server/publishers/:id', authenticateJWT, async (req, res) => {
+app.get('/.netlify/functions/server/publishers/:id', async (req, res) => {
   try {
     const publisher = await Publisher.findOne({ id: req.params.id });
     if (!publisher) {
@@ -153,7 +153,7 @@ app.get('/.netlify/functions/server/publishers/:id', authenticateJWT, async (req
   }
 });
 
-app.post('/.netlify/functions/server/publishers', authenticateJWT, async (req, res) => {
+app.post('/.netlify/functions/server/publishers', async (req, res) => {
   try {
     // Validar los datos entrantes con Joi
     const { error } = publisherSchema.validate(req.body);
@@ -171,7 +171,7 @@ app.post('/.netlify/functions/server/publishers', authenticateJWT, async (req, r
   }
 });
 
-app.put('/.netlify/functions/server/publishers/:id', authenticateJWT, async (req, res) => {
+app.put('/.netlify/functions/server/publishers/:id', async (req, res) => {
   try {
     // Validar los datos entrantes con Joi
     const { error } = publisherSchema.validate(req.body);
@@ -193,7 +193,7 @@ app.put('/.netlify/functions/server/publishers/:id', authenticateJWT, async (req
   }
 });
 
-app.delete('/.netlify/functions/server/publishers/:id', authenticateJWT, async (req, res) => {
+app.delete('/.netlify/functions/server/publishers/:id', async (req, res) => {
   try {
     const deletedPublisher = await Publisher.findOneAndDelete({ id: req.params.id });
     if (!deletedPublisher) {
