@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors);
 
 // Rutas para autores
-app.get('/authors', async (req, res) => {
+app.get('/.netlify/functions/server/authors', async (req, res) => {
   try {
     const authors = await Author.find();
     res.json(authors);
