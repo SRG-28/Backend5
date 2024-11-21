@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
 const Joi = require('joi'); // Usamos Joi para la validación de los datos de entrada
 require('dotenv').config();
+app.use(authMiddleware);
 
 // Configurar Express
 const app = express();
