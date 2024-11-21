@@ -4,7 +4,7 @@ require('dotenv').config();
 app.use(authMiddleware); // Esto podría estar afectando `/auth/login`
 
 // Excluir rutas específicas
-app.use("/auth/login", require("./routes/login")); // Sin `authMiddleware`
+app.use("/auth/login", require("./login")); // Sin `authMiddleware`
 
 const authenticateJWT = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1]; // Asumimos que el token viene como 'Bearer <token>'
