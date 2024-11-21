@@ -1,6 +1,6 @@
 "use strict"
 
-const headers = require('./headersCORS');
+const headers = require('./headerCORS');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 
