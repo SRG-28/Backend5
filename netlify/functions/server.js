@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
 const Joi = require('joi'); // Usamos Joi para la validación de los datos de entrada
 require('dotenv').config();
-app.use(authMiddleware);
+
 
 // Configurar Express
 const app = express();
@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(cors);
 app.use(helmet());  // Protege las cabeceras HTTP
-
+app.use(authMiddleware);
 // Middleware de autenticación
 const authenticateJWT = (req, res, next) => {
   const token = req.headers['authorization'];
