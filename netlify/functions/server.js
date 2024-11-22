@@ -46,17 +46,6 @@ const publisherSchema = Joi.object({
   books: Joi.array().items(Joi.string()).required(),
 });
 
-exports.handler = async (event, context) => {
-  const response = {
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: JSON.stringify({ message: "Hello" })
-  };
-  return response;
-};
-
 // Rutas para autores
 app.get('/.netlify/functions/server/authors', async (req, res) => {
   try {

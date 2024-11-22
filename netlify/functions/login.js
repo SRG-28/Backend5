@@ -6,16 +6,6 @@ const bcrypt = require("bcryptjs");
 const fs = require("fs");
 require('dotenv').config();
 
-exports.handler = async (event, context) => {
-  const response = {
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: JSON.stringify({ message: "Hello" })
-  };
-  return response;
-};
 
 exports.handler = async (event, context) => {
   // Manejo de preflight para CORS (solicitudes OPTIONS)
