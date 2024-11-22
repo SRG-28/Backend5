@@ -1,14 +1,15 @@
 "use strict";
 
-const headers = require('./headerCORS'); // Configuración de los headers para CORS
+const headers = require('./headerCORS');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 require('dotenv').config();
-
+app.use(authMiddleware);
 
 exports.handler = async (event, context) => {
-  // Manejo de preflight para CORS (solicitudes OPTIONS)
+
+  // Permitir opciones para CORS
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -21,7 +22,7 @@ exports.handler = async (event, context) => {
     // Parsear el cuerpo de la solicitud
     const data = JSON.parse(event.body);
 
-    // Verificar que el email y la contraseña estén presentes en la solicitud
+    // Verificar que el email y password sean proporcionados
     if (!(data.email && data.password)) {
       return {
         statusCode: 400,
@@ -30,7 +31,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Buscar el usuario en el archivo JSON
+    // Buscar usuario en el archivo JSON
     const user = await getUserByEmail(data.email);
 
     if (!user) {
@@ -41,12 +42,12 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Comparar la contraseña proporcionada con la almacenada en la base de datos (en el archivo JSON)
+    // Verificar la contraseña del usuario
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
 
     if (!isPasswordValid) {
       return {
-        statusCode: 401,
+        statusCode: 400,
         headers,
         body: JSON.stringify({ message: "Invalid Credentials" })
       };
@@ -56,10 +57,10 @@ exports.handler = async (event, context) => {
     const token = jwt.sign(
       { user_id: user.email, role: user.role },
       process.env.TOKEN_KEY,
-      { expiresIn: "2h" }  // El token expirará en 2 horas
+      { expiresIn: "2h" }
     );
 
-    // Responder con el token generado
+    // Responder con el token
     return {
       statusCode: 200,
       headers,
@@ -76,16 +77,17 @@ exports.handler = async (event, context) => {
   }
 };
 
-// Función para obtener un usuario por email desde el archivo JSON
+// Función para obtener usuario desde el archivo JSON
 async function getUserByEmail(email) {
   try {
-    const usersData = fs.readFileSync('./users.json', 'utf8'); // Leer el archivo de usuarios
-    const users = JSON.parse(usersData); // Parsear el contenido del archivo JSON
+    const usersData = fs.readFileSync('./users.json', 'utf8');
+    const users = JSON.parse(usersData);
 
-    // Retornar el usuario encontrado o null si no se encuentra
-    return users.find(user => user.email === email) || null;
+    // Buscar el usuario por email
+    return users.find(user => user.email === email);
   } catch (error) {
     console.error("Error al leer el archivo de usuarios:", error);
     throw new Error("Error al obtener el usuario.");
   }
 }
+
