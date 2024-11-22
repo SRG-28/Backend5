@@ -1,5 +1,5 @@
 [build]
-  functions = "netlify/functions"  # Ruta donde están tus funciones de Netlify
+  functions = "netlify/functions" 
 
 [[redirects]]
   from = "/.netlify/functions/*"
@@ -7,7 +7,7 @@
   status = 200
   force = true
   headers = { 
-    "Access-Control-Allow-Origin" = "*",           # Permitir cualquier origen
-    "Access-Control-Allow-Methods" = "GET, POST, PUT, DELETE, OPTIONS",  # Métodos permitidos
-    "Access-Control-Allow-Headers" = "Content-Type, Authorization"      # Encabezados permitidos
+    "Access-Control-Allow-Origin" = "*",          
+    "Access-Control-Allow-Methods" = "GET, POST, PUT, DELETE, OPTIONS", 
+    "Access-Control-Allow-Headers" = "Content-Type, Authorization"      
   }
