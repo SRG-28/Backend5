@@ -2,7 +2,7 @@
 "use strict";
 
 const express = require('express');
-const cors = require('./headerCORS');
+const cors = require('./headerCORS');  // Importamos el archivo con las configuraciones CORS
 const mongoose = require('../../mongoDB');  // Importamos la conexión ya realizada en mongoDB.js
 const Author = require('../../models/author');
 const Publisher = require('../../models/publisher');
@@ -10,6 +10,7 @@ const serverless = require('serverless-http');
 const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
 const Joi = require('joi'); // Usamos Joi para la validación de los datos de entrada
+
 require('dotenv').config();
 
 // Configurar Express
@@ -20,9 +21,10 @@ const authenticateJWT = require('./authMiddleware');  // Importamos el middlewar
 
 // Usar middleware para parsear JSON, habilitar CORS y añadir seguridad con Helmet
 app.use(express.json());
-app.use(cors);
-app.use(helmet());  // Protege las cabeceras HTTP
+app.use(cors); // Middleware de CORS para habilitar las solicitudes desde diferentes orígenes
+app.use(helmet());  // Protege las cabeceras HTTP de la aplicación
 app.use(authenticateJWT); // Usamos el middleware después de su definición
+app.options('*', cors); // Habilita CORS para todas las rutas con solicitudes preflight
 
 // Esquema de validación para autores usando Joi
 const authorSchema = Joi.object({

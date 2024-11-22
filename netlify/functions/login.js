@@ -1,15 +1,13 @@
 "use strict";
 
-const headers = require('./headerCORS');
+const headers = require('./headerCORS'); // Configuración de los headers para CORS
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 require('dotenv').config();
-app.use(authMiddleware);
 
 exports.handler = async (event, context) => {
-
-  // Permitir opciones para CORS
+  // Manejo de preflight para CORS
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -22,7 +20,7 @@ exports.handler = async (event, context) => {
     // Parsear el cuerpo de la solicitud
     const data = JSON.parse(event.body);
 
-    // Verificar que el email y password sean proporcionados
+    // Verificar que el email y la contraseña estén presentes
     if (!(data.email && data.password)) {
       return {
         statusCode: 400,
@@ -31,7 +29,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Buscar usuario en el archivo JSON
+    // Buscar el usuario en el archivo JSON
     const user = await getUserByEmail(data.email);
 
     if (!user) {
@@ -42,12 +40,12 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Verificar la contraseña del usuario
+    // Comparar la contraseña proporcionada con la almacenada
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
 
     if (!isPasswordValid) {
       return {
-        statusCode: 400,
+        statusCode: 401,
         headers,
         body: JSON.stringify({ message: "Invalid Credentials" })
       };
@@ -60,7 +58,7 @@ exports.handler = async (event, context) => {
       { expiresIn: "2h" }
     );
 
-    // Responder con el token
+    // Responder con el token generado
     return {
       statusCode: 200,
       headers,
@@ -77,17 +75,16 @@ exports.handler = async (event, context) => {
   }
 };
 
-// Función para obtener usuario desde el archivo JSON
+// Función para obtener un usuario por email desde el archivo JSON
 async function getUserByEmail(email) {
   try {
     const usersData = fs.readFileSync('./users.json', 'utf8');
     const users = JSON.parse(usersData);
 
-    // Buscar el usuario por email
-    return users.find(user => user.email === email);
+    // Retornar el usuario encontrado o null
+    return users.find(user => user.email === email) || null;
   } catch (error) {
     console.error("Error al leer el archivo de usuarios:", error);
     throw new Error("Error al obtener el usuario.");
   }
 }
-
