@@ -1,10 +1,14 @@
-const cors = require('cors');
-
-const corsOptions = {
-  origin: 'http://localhost:5173',  // Permite solo tu frontend en localhost
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,  // Si necesitas enviar cookies o credenciales
+// login.js (Netlify Function)
+const handler = async (event, context) => {
+  return {
+    statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*', // Allow all origins, or replace '*' with the specific domain (e.g., 'http://localhost:5173')
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', // Methods allowed
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization', // Allowed headers
+    },
+    body: JSON.stringify({ message: 'Login successful!' }),
+  };
 };
 
-app.use(cors(corsOptions));  // Aplica CORS con las opciones configuradas
+exports.handler = handler;
